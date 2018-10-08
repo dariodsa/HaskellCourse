@@ -1,4 +1,4 @@
-# PUH assignments - dariodsa
+# PUH assignments - Dario Sindičić
 
 Welcome to your PUH assignments repository, *dariodsa*. Here's a quick intro to how things are gonna work around here.
 
