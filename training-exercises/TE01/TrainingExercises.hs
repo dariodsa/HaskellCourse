@@ -76,14 +76,19 @@ import Data.Char
 -- if it's even otherwise it adds 1 to it and than divides it by 2.
 --
 -- You can use 'even' and 'div' functions to make things easier.
-te111 = undefined
+te111 x = if even x then     x `div` 2
+                    else (x+1) `div` 2 
 
 -- ** TE 1.1.2
 --
 -- | Using GUARDS, implement a function which takes in an 'Int' and for numbers from
 -- 1 to 3 it returns "one", "two" and "three" respectively, for everything else
 -- return "out of range".
-te112 = undefined
+te112 x 
+  | x == 1    = "one"
+  | x == 2    = "two"
+  | x == 3    = "three"
+  | otherwise = "out of range"
 
 -- ** TE 1.1.3
 --
@@ -93,7 +98,11 @@ te112 = undefined
 -- return "out of range".
 --
 -- Message should be in the following format: "number is in the [1,5) range"
-te113 = undefined
+te113 n
+  | n <= 0 && n >= (-4) = "number is in the [-4,0] range"
+  | n < 5 && n >= 1     = "number is in the [1,5) range"
+  | n > 25 && n <= 100  = "number is in the (25,100] range"
+  | otherwise           = "out of range"
 
 --
 
@@ -103,13 +112,18 @@ te113 = undefined
 --
 -- | Implement a function which takes in two lists of the same type and returns the
 -- longer one. If the lists are of equal length concatenate them and return that.
-te121 = undefined
+te121 xs ys
+  | l1 > l2   = xs
+  | l1 < l2   = ys
+  | otherwise = xs ++ ys
+  where l1 = length xs
+        l2 = length ys
 
 -- ** TE 1.2.2
 --
 -- | Implement a function which adds '.' to the end of the 'String' by using ':'
 -- (cons operator) and 'reverse' function.
-te122 = undefined
+te122 xs = reverse $ '.': reverse xs
 
 -- ** TE 1.2.3
 --
@@ -118,7 +132,10 @@ te122 = undefined
 --
 -- You can use functions 'words' and 'unwords' to split the 'String' into a list of
 -- words.
-te123 = undefined
+te123 x
+   | length xs <= 6 = ""
+   | otherwise = unwords $ drop 3 $ take (length xs - 3) xs
+   where xs = words x
 
 --
 
@@ -133,7 +150,7 @@ te123 = undefined
 --
 -- Here is an example of such list where 'n' is 3:
 -- [(3,9),(5,25),(7,49),(9,81),...]
-te131 = undefined
+te131 n = [ (x,x*x) | x <- [n,n+2..]]
 
 -- ** TE 1.3.2
 --
@@ -152,7 +169,7 @@ te131 = undefined
 -- (don't modify them). 'te132' should not take any arguments.
 --
 -- Also, pick one title and write a short story of 250 words max. (jk. lol :)
-te132 = undefined
+te132 = zip [1..] ["The " ++ s1 ++ " " ++ s2 | s1 <-adjective , s2  <- noun]
 
 -- | Lists which you should use in your 'te132' implementation.
 adjective, noun :: [String]
@@ -165,4 +182,41 @@ adjective, noun :: [String]
 --
 -- | Implement a function which takes in a list of pairs / tuples of 'Int's and
 -- returns a list of their sums.
-te133 = undefined
+te133 xs = [fst x + snd x | x <- xs]
+
+-- ** TE 1.1.4 <- EXTRA
+--
+-- | Implement a function which takes in two 'Int's, multiplies them and adds 1 to the result.
+-- Using our trusty IF-THEN-ELSE check if the result of the multiplication is even and in that
+-- case divide it by 2 first. After that add 1 to the resulting number.
+--
+-- Remember that IF-THEN-ELSE is an expression and always returns a value.
+te114 :: Int -> Int -> Int
+te114 x y = if even mul then mulBy2 + 1
+                        else mul + 1
+            where  mul    = x*y
+                   mulBy2 = mul `div` 2
+
+
+-- ** TE 1.2.4 <- EXTRA
+--
+-- | Implement a function which checks if the 'String' is a palindrome. If it is,
+-- then return only the first half (if it has odd length then don't include the
+-- middle character) otherwise return the 'String' unmodified.
+--
+-- You can assume that all letters will be lower case.
+te124 :: String -> String
+te124 s 
+  | s == reverse s = take n s
+  | otherwise      = s
+  where n = (length s) `div` 2
+-- ** TE 1.3.4 <- EXTRA
+--
+-- | Implement a function which takes two sentences as a tuple and returns a list of
+-- common words.
+--
+-- You can assume that all letters are in lower case. Don't forget that you can use
+-- filters in list comprehension.
+te134 :: (String, String) -> [String]
+te134 (x,y) = [ s1 | s1 <- nub $ words x, elem s1 s2]
+          where s2 = nub $ words y
