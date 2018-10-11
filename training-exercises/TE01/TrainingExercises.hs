@@ -99,10 +99,10 @@ te112 x
 --
 -- Message should be in the following format: "number is in the [1,5) range"
 te113 n
-  | [x | x <- [1..4],     x == n] /= [] = "number is in the [1,5) range"
-  | [x | x <- [(-4)..0],  x == n] /= [] = "number is in the [-4,0] range"
-  | [x | x <- [26..100],  x == n] /= [] = "number is in the (25,100] range"
-  | otherwise = "out of range"
+  | n <= 0 && n >= (-4) = "number is in the [-4,0] range"
+  | n < 5 && n >= 1     = "number is in the [1,5) range"
+  | n > 25 && n <= 100  = "number is in the (25,100] range"
+  | otherwise           = "out of range"
 
 --
 
@@ -123,7 +123,7 @@ te121 xs ys
 --
 -- | Implement a function which adds '.' to the end of the 'String' by using ':'
 -- (cons operator) and 'reverse' function.
-te122 xs = reverse $ '.':(reverse xs )
+te122 xs = reverse $ '.': reverse xs
 
 -- ** TE 1.2.3
 --
@@ -134,7 +134,7 @@ te122 xs = reverse $ '.':(reverse xs )
 -- words.
 te123 x
    | length xs <= 6 = ""
-   | otherwise = unwords $ init $ init $ init $ drop 3 xs
+   | otherwise = unwords $ drop 3 $ take (length xs - 3) xs
    where xs = words x
 
 --
@@ -218,4 +218,5 @@ te124 s
 -- You can assume that all letters are in lower case. Don't forget that you can use
 -- filters in list comprehension.
 te134 :: (String, String) -> [String]
-te134 (x,y) = [ s1 | s1 <- words x, s2 <- words y, s1 == s2]
+te134 (x,y) = [ s1 | s1 <- nub $ words x, elem s1 s2]
+          where s2 = nub $ words y
