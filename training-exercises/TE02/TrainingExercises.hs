@@ -12,7 +12,7 @@
 --
 module TrainingExercises where
 --
-import Data.List
+import Data.List hiding (lookup, insert)
 import Data.Char
 --
 
@@ -36,13 +36,13 @@ import Data.Char
 -- a list with a single element as a result (or no elements if the key doesn't
 -- exist):
 findItem :: [(String, a)] -> String -> [(String, a)]
-findItem = undefined
+findItem xs s = [x | x <- xs , fst x == s]
 
 -- ** TE 2.2
 --
 -- | Write a function that checks if a list contains an element with a certain key:
 contains :: [(String, a)] -> String -> Bool
-contains = undefined
+contains xs s = not $ null $ findItem xs s
 
 -- ** TE 2.3
 --
@@ -50,23 +50,27 @@ contains = undefined
 -- the key doesn’t exist (example of error function usage : error "I’m an error
 -- message"):
 lookup :: [(String, a)] -> String -> a
-lookup = undefined
+lookup xs s = if contains xs s then snd $ head $ findItem xs s
+                               else error "I'm an error"
 
 -- ** TE 2.4
 --
 -- | Write a function that inserts a new key value pair. If key already exists than do nothing:
 insert :: [(String, a)] -> (String, a) -> [(String, a)]
-insert = undefined
+insert xs (s,v) = if not $ contains xs s then [(s,v)] ++ xs
+                                   else xs
 
 -- ** TE 2.5
 --
 -- | Write a function that removes a key value pair with the certain key:
 remove :: [(String, a)] -> String -> [(String, a)]
-remove = undefined
+remove xs s = [ x | x <- xs, fst x /= s]
 
 -- ** TE 2.6
 --
 -- | Write a function that updates the value of a certain key (if the key doesn’t exist,
 -- the function does nothing) :
 update :: [(String, a)] -> String -> a -> [(String, a)]
-update = undefined
+update xs s v = if contains xs s then insert others (s,v)
+                                 else xs
+                where others = remove xs s

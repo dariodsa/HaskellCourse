@@ -76,6 +76,7 @@ import Data.Char
 -- if it's even otherwise it adds 1 to it and than divides it by 2.
 --
 -- You can use 'even' and 'div' functions to make things easier.
+te111 :: Integral a => a -> a
 te111 x = if even x then     x `div` 2
                     else (x+1) `div` 2 
 
@@ -84,6 +85,7 @@ te111 x = if even x then     x `div` 2
 -- | Using GUARDS, implement a function which takes in an 'Int' and for numbers from
 -- 1 to 3 it returns "one", "two" and "three" respectively, for everything else
 -- return "out of range".
+te112 ::(Eq a, Num a) => a -> [Char]
 te112 x 
   | x == 1    = "one"
   | x == 2    = "two"
@@ -98,6 +100,7 @@ te112 x
 -- return "out of range".
 --
 -- Message should be in the following format: "number is in the [1,5) range"
+te113 :: (Ord a, Num a) => a -> [Char]
 te113 n
   | n <= 0 && n >= (-4) = "number is in the [-4,0] range"
   | n < 5 && n >= 1     = "number is in the [1,5) range"
@@ -112,6 +115,7 @@ te113 n
 --
 -- | Implement a function which takes in two lists of the same type and returns the
 -- longer one. If the lists are of equal length concatenate them and return that.
+te121 :: [a] -> [a] -> [a]
 te121 xs ys
   | l1 > l2   = xs
   | l1 < l2   = ys
@@ -123,6 +127,7 @@ te121 xs ys
 --
 -- | Implement a function which adds '.' to the end of the 'String' by using ':'
 -- (cons operator) and 'reverse' function.
+te122 :: [Char] -> [Char]
 te122 xs = reverse $ '.': reverse xs
 
 -- ** TE 1.2.3
@@ -132,6 +137,7 @@ te122 xs = reverse $ '.': reverse xs
 --
 -- You can use functions 'words' and 'unwords' to split the 'String' into a list of
 -- words.
+te123 :: [Char] -> [Char]
 te123 x
    | length xs <= 6 = ""
    | otherwise = unwords $ drop 3 $ take (length xs - 3) xs
@@ -150,6 +156,7 @@ te123 x
 --
 -- Here is an example of such list where 'n' is 3:
 -- [(3,9),(5,25),(7,49),(9,81),...]
+te131 :: (Num a, Enum a) => a -> [(a,a)]
 te131 n = [ (x,x*x) | x <- [n,n+2..]]
 
 -- ** TE 1.3.2
@@ -169,6 +176,7 @@ te131 n = [ (x,x*x) | x <- [n,n+2..]]
 -- (don't modify them). 'te132' should not take any arguments.
 --
 -- Also, pick one title and write a short story of 250 words max. (jk. lol :)
+te132 :: [(Integer, [Char])]
 te132 = zip [1..] ["The " ++ s1 ++ " " ++ s2 | s1 <-adjective , s2  <- noun]
 
 -- | Lists which you should use in your 'te132' implementation.
@@ -182,6 +190,7 @@ adjective, noun :: [String]
 --
 -- | Implement a function which takes in a list of pairs / tuples of 'Int's and
 -- returns a list of their sums.
+te133 :: Num a => [(a, a)] -> [a]
 te133 xs = [fst x + snd x | x <- xs]
 
 -- ** TE 1.1.4 <- EXTRA
