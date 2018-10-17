@@ -39,7 +39,8 @@ exampleUser = ("username", "nope", 3)
 --   3. Otherwise it is a bad password.
 
 te311 :: (Username, Password, LoggedInTimes) -> Bool
-te311 = undefined
+te311 (_, "flasha-ah",_) = True
+te311 _                  = False
 
 -- ** TE 3.1.2
 --
@@ -48,8 +49,9 @@ te311 = undefined
 --
 -- -> Example: te312 ("username", "nope", 3) ==> ("username", False, 3).
 -- Bear in mind that you will need the whole input tuple for te311.
-
-te312 = undefined
+te312 :: (Username, Password, LoggedInTimes) -> (Username, Bool, a)
+te312 x@(username, password, n) = (username, validation, n)
+   where validation = te311 x
 
 -- ** TE 3.1.3
 --
@@ -57,16 +59,17 @@ te312 = undefined
 -- Output of te312 is ideal input for this function.
 -- -> Example: te313 ("username", True, 3) ==> "Heeey man, glad to see you back."
 -- -> Example: te313 ("username", False, 3) ==> "NO! GOD! NO!" (https://giphy.com/gifs/the-office-no-michael-scott-ToMjGpx9F5ktZw8qPUQ)
-
-te313 = undefined
+te313 :: (Username, Bool, LoggedInTimes) -> String
+te313 (_, True, _)  = "Heeey man, glad to see you back."
+te313 (_, False, _) = "NO! GOD! NO!"
 
 -- ** TE 3.1.4 - EXTRA
 --
 -- | Write a function that goes through a list of users and extracts the LoggedInTimes attribute (list comprehension).
 -- After that you should sum the resulting list. (Hint: it has something to do with the `sum` function).
 
-te314 undefined
-
+te314 :: [(Username, Password, LoggedInTimes)] -> Int
+te314 xs = sum [ x | (_,_,x) <- xs]
 
 {- * 3.2 LOCAL DEFINITION (WHERE & LET) -}
 
@@ -76,8 +79,18 @@ te314 undefined
 -- of doubles when its first and last elements are removed.
 -- If you have to calculate average of an empty list, throw an error.
 -- Ex. te321 [2.0, 4.0, 6.0, 10.0] -> 5.0
+average :: [Double] -> Double
+average xs = suma / n
+      where suma = (sum xs) :: Double
+            n    = length xs :: Double
 
-te321 = undefined
+te321 :: [Double] -> Double
+te321 [] = error "error"
+te321 [x] = error "error"
+te321 (_:_:_) = error "error"
+te321 xs = average xs'
+    where xs' = tail $ init xs
+  
 
 -- ** TE 3.2.2
 --
