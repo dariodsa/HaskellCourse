@@ -109,6 +109,7 @@ lb11 y
 removeSpaces :: String -> String
 removeSpaces xs = filter (/= ' ') xs
 
+lowerCase :: [Char] -> [Char]
 lowerCase xs = [toLower x | x <- xs]
 
 
