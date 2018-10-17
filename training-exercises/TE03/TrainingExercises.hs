@@ -40,8 +40,8 @@ exampleUser = ("username", "nope", 3)
 
 te311 :: (Username, Password, LoggedInTimes) -> Bool
 te311 (_, "flasha-ah",_) = True
-te311 _                  = False
-
+te311 (_, password@('H':_), _)   = length password > 5
+te311 _ = False
 -- ** TE 3.1.2
 --
 -- | Write a function that transforms a user tuple to a tuple that contains
@@ -49,7 +49,7 @@ te311 _                  = False
 --
 -- -> Example: te312 ("username", "nope", 3) ==> ("username", False, 3).
 -- Bear in mind that you will need the whole input tuple for te311.
-te312 :: (Username, Password, LoggedInTimes) -> (Username, Bool, a)
+te312 :: (Username, Password, LoggedInTimes) -> (Username, Bool, LoggedInTimes)
 te312 x@(username, password, n) = (username, validation, n)
    where validation = te311 x
 
@@ -79,16 +79,16 @@ te314 xs = sum [ x | (_,_,x) <- xs]
 -- of doubles when its first and last elements are removed.
 -- If you have to calculate average of an empty list, throw an error.
 -- Ex. te321 [2.0, 4.0, 6.0, 10.0] -> 5.0
-average :: [Double] -> Double
+average :: [Float] -> Float
 average xs = suma / n
-      where suma = (sum xs) :: Double
-            n    = length xs :: Double
+      where suma = sum xs
+            n    = fromIntegral $ length xs
 
-te321 :: [Double] -> Double
-te321 [] = error "error"
-te321 [x] = error "error"
-te321 (_:_:_) = error "error"
-te321 xs = average xs'
+te321 :: [Float] -> Float
+te321 []      = error "error"
+te321 [x]     = error "error"
+te321 (_:_:[]) = error "error"
+te321 xs      = average xs'
     where xs' = tail $ init xs
   
 
@@ -103,7 +103,12 @@ te321 xs = average xs'
 -- Ex. te322 "AA"  -> "The string has two characters"
 -- Ex. te322 "AAA" -> "The string has many characters"
 
-te322 = undefined
+te322 :: String -> String
+te322 "" = error "error"
+te322 xs = "The string has " ++ case xs of
+      (x:[]) -> "one character"
+      (x:y:[]) -> "two characters"
+      xs       -> "many characters"
 
 -- ** TE 3.2.3
 --
@@ -113,7 +118,11 @@ te322 = undefined
 -- the previously defined 'median' function.)
 -- quartiles [3,1,2,4,5,6,8,0,7] => (1.5, 4.0, 6.5)
 
-te323 = undefined
+te323 :: [Num] -> [Num]
+te323 xs = (first, second,third)
+  where first  = median $  
+        second = median $  
+        third  = median $ 
 
 -- you already have this (from the lecture:)
 median :: (Integral a, Fractional b) => [a] -> b
