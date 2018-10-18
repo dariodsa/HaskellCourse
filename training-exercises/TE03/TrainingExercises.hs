@@ -39,9 +39,9 @@ exampleUser = ("username", "nope", 3)
 --   3. Otherwise it is a bad password.
 
 te311 :: (Username, Password, LoggedInTimes) -> Bool
-te311 (_, "flasha-ah",_) = True
+te311 (_, "flasha-ah",_)         = True
 te311 (_, password@('H':_), _)   = length password > 5
-te311 _ = False
+te311           _                = False
 -- ** TE 3.1.2
 --
 -- | Write a function that transforms a user tuple to a tuple that contains
@@ -60,7 +60,7 @@ te312 x@(username, password, n) = (username, validation, n)
 -- -> Example: te313 ("username", True, 3) ==> "Heeey man, glad to see you back."
 -- -> Example: te313 ("username", False, 3) ==> "NO! GOD! NO!" (https://giphy.com/gifs/the-office-no-michael-scott-ToMjGpx9F5ktZw8qPUQ)
 te313 :: (Username, Bool, LoggedInTimes) -> String
-te313 (_, True, _)  = "Heeey man, glad to see you back."
+te313 (_, True,  _) = "Heeey man, glad to see you back."
 te313 (_, False, _) = "NO! GOD! NO!"
 
 -- ** TE 3.1.4 - EXTRA
@@ -106,9 +106,9 @@ te321 xs      = average xs'
 te322 :: String -> String
 te322 "" = error "error"
 te322 xs = "The string has " ++ case xs of
-      (x:[]) -> "one character"
+      (x:[])   -> "one character"
       (x:y:[]) -> "two characters"
-      xs       -> "many characters"
+      _        -> "many characters"
 
 -- ** TE 3.2.3
 --
@@ -118,11 +118,20 @@ te322 xs = "The string has " ++ case xs of
 -- the previously defined 'median' function.)
 -- quartiles [3,1,2,4,5,6,8,0,7] => (1.5, 4.0, 6.5)
 
-te323 :: [Num] -> [Num]
+te323 :: (Num a, Ord a, Integral a, Fractional b) => [a] -> (b,b,b)
 te323 xs = (first, second,third)
-  where first  = median $  
-        second = median $  
-        third  = median $ 
+  where first  = median q1  
+        second = median q2
+        third  = median q3
+        xs'    = sort xs
+        len    = length xs'
+        arr2   = splitAt (len `div` 2) xs'
+        q1     = fst $ arr2
+        q2     = xs'
+        q3     
+         | len `mod` 2 == 0 = snd $ arr2
+         | otherwise        = snd $ splitAt (len `div` 2 + 1) xs'
+
 
 -- you already have this (from the lecture:)
 median :: (Integral a, Fractional b) => [a] -> b
