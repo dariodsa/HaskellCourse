@@ -39,9 +39,9 @@ exampleUser = ("username", "nope", 3)
 --   3. Otherwise it is a bad password.
 
 te311 :: (Username, Password, LoggedInTimes) -> Bool
-te311 (_, "flasha-ah",_)         = True
-te311 (_, password@('H':_), _)   = length password > 5
-te311           _                = False
+te311 (_, "flasha-ah",_)                  = True
+te311 (_, password@('H':_:_:_:_:_), _)   = True
+te311                      _              = False
 -- ** TE 3.1.2
 --
 -- | Write a function that transforms a user tuple to a tuple that contains
@@ -85,11 +85,9 @@ average xs = suma / n
             n    = fromIntegral $ length xs
 
 te321 :: [Float] -> Float
-te321 []      = error "error"
-te321 [x]     = error "error"
-te321 (_:_:[]) = error "error"
-te321 xs      = average xs'
+te321 xs@(_:_:_:_)      = average xs'
     where xs' = tail $ init xs
+te321     _             = error "error"
   
 
 -- ** TE 3.2.2
@@ -129,8 +127,8 @@ te323 xs = (first, second,third)
         q1     = fst $ arr2
         q2     = xs'
         q3     
-         | len `mod` 2 == 0 = snd $ arr2
-         | otherwise        = snd $ splitAt (len `div` 2 + 1) xs'
+         | even len  = snd $ arr2
+         | otherwise = tail $ snd arr2
 
 
 -- you already have this (from the lecture:)
