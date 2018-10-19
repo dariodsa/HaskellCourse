@@ -55,6 +55,7 @@ te412 x y
 --
 
 te413 :: [a] -> a
+te413 []     = error "error"
 te413 [x]    = x
 te413 (x:xs) = te413 xs
 
@@ -65,7 +66,7 @@ te413 (x:xs) = te413 xs
 -- | You are not allowed to use list comprehension here!
 --
 
-te414 :: (Ord a) => [a] -> [a]
+te414 :: (Ord a, Eq a) => [a] -> [a]
 te414 []  = []
 te414 [x] = [x]
 te414 xs  = merge xs1 xs2
@@ -78,7 +79,7 @@ te414 xs  = merge xs1 xs2
          merge [] x2 = x2
          merge x1 [] = x1
          merge (x:xs) (y:ys)
-            | x < y     = x:merge xs (y:ys)
+            | x <= y     = x:merge xs (y:ys)
             | otherwise = y:merge (x:xs) ys
 
 
@@ -89,14 +90,14 @@ te414 xs  = merge xs1 xs2
 -- | List comprehensions are not alowed once again! 
 --
 
-te415 :: (Ord a) => [a] -> [a]
+te415 :: (Ord a, Eq a) => [a] -> [a]
 te415 []     = []
 te415 [x]    = [x]
 te415 (x:xs) = insert $ te415 xs
           where --insert :: (Eq a, Ord a) => [a] -> [a]
                 insert [] = [x]
                 insert (y:ys) 
-                   | x < y     = x : y : ys
+                   | x <= y     = x : y : ys
                    | otherwise = y : insert ys 
 
   {- * 4.2 Corecursion -}
