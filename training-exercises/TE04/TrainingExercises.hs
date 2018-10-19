@@ -30,7 +30,9 @@ import Data.Char
 -- | https://en.wikipedia.org/wiki/Tower_of_Hanoi#Recursive_solution
 --
 
-te411 = undefined
+te411 :: Integer -> Integer
+te411 1 = 1
+te411 n = 2 * te411 (n-1) + 1 
 
 
 -- ** TE 4.1.2
@@ -38,7 +40,12 @@ te411 = undefined
 -- | Define a recursive function that calculates the greatest common divisor of two given numbers.
 --
 
-te412 = undefined
+te412 :: (Integral a) => a -> a -> a
+te412 _ 0 = 1
+te412 x y
+  | z == 0    = y
+  | otherwise = te412 y z
+  where z = x `mod` y
 
 
 -- ** TE 4.1.3
@@ -47,7 +54,9 @@ te412 = undefined
 -- | What do you think should happen with an empty list?
 --
 
-te413 = undefined
+te413 :: [a] -> a
+te413 [x]    = x
+te413 (x:xs) = te413 xs
 
 
 -- ** TE 4.1.4
@@ -56,7 +65,21 @@ te413 = undefined
 -- | You are not allowed to use list comprehension here!
 --
 
-te414 = undefined
+te414 :: (Ord a) => [a] -> [a]
+te414 []  = []
+te414 [x] = [x]
+te414 xs  = merge xs1 xs2
+   where half = length xs `div` 2 
+         arr  = splitAt half xs
+         xs1  = te414 $ fst arr
+         xs2  = te414 $ snd arr
+         merge :: (Eq a, Ord a) => [a] -> [a] -> [a]
+         merge []  []  = []
+         merge [] x2 = x2
+         merge x1 [] = x1
+         merge (x:xs) (y:ys)
+            | x < y     = x:merge xs (y:ys)
+            | otherwise = y:merge (x:xs) ys
 
 
 -- ** TE 4.1.5 - EXTRA
@@ -66,8 +89,15 @@ te414 = undefined
 -- | List comprehensions are not alowed once again! 
 --
 
-te415 = undefined
-
+te415 :: (Ord a) => [a] -> [a]
+te415 []     = []
+te415 [x]    = [x]
+te415 (x:xs) = insert $ te415 xs
+          where --insert :: (Eq a, Ord a) => [a] -> [a]
+                insert [] = [x]
+                insert (y:ys) 
+                   | x < y     = x : y : ys
+                   | otherwise = y : insert ys 
 
   {- * 4.2 Corecursion -}
 
@@ -76,4 +106,5 @@ te415 = undefined
 -- | Write your own definition of the cycle function.
 --
 
-te421 = undefined
+te421 :: [a] -> [a]
+te421 xs = xs ++ te421 xs
