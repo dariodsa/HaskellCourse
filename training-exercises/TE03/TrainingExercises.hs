@@ -39,8 +39,9 @@ exampleUser = ("username", "nope", 3)
 --   3. Otherwise it is a bad password.
 
 te311 :: (Username, Password, LoggedInTimes) -> Bool
-te311 = undefined
-
+te311 (_, "flasha-ah",_)                  = True
+te311 (_, password@('H':_:_:_:_:_), _)   = True
+te311                      _              = False
 -- ** TE 3.1.2
 --
 -- | Write a function that transforms a user tuple to a tuple that contains
@@ -48,8 +49,9 @@ te311 = undefined
 --
 -- -> Example: te312 ("username", "nope", 3) ==> ("username", False, 3).
 -- Bear in mind that you will need the whole input tuple for te311.
-
-te312 = undefined
+te312 :: (Username, Password, LoggedInTimes) -> (Username, Bool, LoggedInTimes)
+te312 x@(username, password, n) = (username, validation, n)
+   where validation = te311 x
 
 -- ** TE 3.1.3
 --
@@ -57,16 +59,17 @@ te312 = undefined
 -- Output of te312 is ideal input for this function.
 -- -> Example: te313 ("username", True, 3) ==> "Heeey man, glad to see you back."
 -- -> Example: te313 ("username", False, 3) ==> "NO! GOD! NO!" (https://giphy.com/gifs/the-office-no-michael-scott-ToMjGpx9F5ktZw8qPUQ)
-
-te313 = undefined
+te313 :: (Username, Bool, LoggedInTimes) -> String
+te313 (_, True,  _) = "Heeey man, glad to see you back."
+te313 (_, False, _) = "NO! GOD! NO!"
 
 -- ** TE 3.1.4 - EXTRA
 --
 -- | Write a function that goes through a list of users and extracts the LoggedInTimes attribute (list comprehension).
 -- After that you should sum the resulting list. (Hint: it has something to do with the `sum` function).
 
-te314 undefined
-
+te314 :: [(Username, Password, LoggedInTimes)] -> Int
+te314 xs = sum [ x | (_,_,x) <- xs]
 
 {- * 3.2 LOCAL DEFINITION (WHERE & LET) -}
 
@@ -76,8 +79,16 @@ te314 undefined
 -- of doubles when its first and last elements are removed.
 -- If you have to calculate average of an empty list, throw an error.
 -- Ex. te321 [2.0, 4.0, 6.0, 10.0] -> 5.0
+average :: [Float] -> Float
+average xs = suma / n
+      where suma = sum xs
+            n    = fromIntegral $ length xs
 
-te321 = undefined
+te321 :: [Float] -> Float
+te321 xs@(_:_:_:_)      = average xs'
+    where xs' = tail $ init xs
+te321     _             = error "error"
+  
 
 -- ** TE 3.2.2
 --
@@ -90,7 +101,12 @@ te321 = undefined
 -- Ex. te322 "AA"  -> "The string has two characters"
 -- Ex. te322 "AAA" -> "The string has many characters"
 
-te322 = undefined
+te322 :: String -> String
+te322 "" = error "error"
+te322 xs = "The string has " ++ case xs of
+      (x:[])   -> "one character"
+      (x:y:[]) -> "two characters"
+      _        -> "many characters"
 
 -- ** TE 3.2.3
 --
@@ -100,7 +116,20 @@ te322 = undefined
 -- the previously defined 'median' function.)
 -- quartiles [3,1,2,4,5,6,8,0,7] => (1.5, 4.0, 6.5)
 
-te323 = undefined
+te323 :: (Num a, Ord a, Integral a, Fractional b) => [a] -> (b,b,b)
+te323 xs = (first, second,third)
+  where first  = median q1  
+        second = median q2
+        third  = median q3
+        xs'    = sort xs
+        len    = length xs'
+        arr2   = splitAt (len `div` 2) xs'
+        q1     = fst $ arr2
+        q2     = xs'
+        q3     
+         | even len  = snd $ arr2
+         | otherwise = tail $ snd arr2
+
 
 -- you already have this (from the lecture:)
 median :: (Integral a, Fractional b) => [a] -> b
