@@ -81,8 +81,18 @@ import Data.Char
 --
 -- Hint: you can write some "helper" functions to help you solve this problem.
 
+division :: Int -> Int -> Bool
+division x y = mod x y == 0
+
 lb11 :: Int -> Int
-lb11 = undefined
+lb11 y 
+    | not $ division y 4   = commonYear
+    | not $ division y 100 = leapYear
+    | not $ division y 400 = commonYear
+    | otherwise      = leapYear
+    where commonYear = 28
+          leapYear   = 29
+          
 
 -- ** L 1.2
 --
@@ -96,9 +106,16 @@ lb11 = undefined
 -- "Haskell is awesome"
 --
 -- Hint: you can write some "helper" functions to help you solve this problem.
+removeSpaces :: String -> String
+removeSpaces xs = filter (/= ' ') xs
+
+lowerCase :: [Char] -> [Char]
+lowerCase xs = [toLower x | x <- xs]
+
 
 lb12 :: String -> Bool
-lb12 = undefined
+lb12 s = xs == reverse xs
+     where xs = lowerCase $ removeSpaces s
 
 -- * L 1.3
 --
@@ -110,4 +127,6 @@ lb12 = undefined
 -- lb13 2 [2,3,5,7,11,13,17] = [3,7,13]
 
 lb13 :: Int -> [a] -> [a]
-lb13 = undefined
+lb13 n xs = [snd x | x <- xs1, fst x `mod` n == 0]
+       where xs1 = zip [1..] xs
+
