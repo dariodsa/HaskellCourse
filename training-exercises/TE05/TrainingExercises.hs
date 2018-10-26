@@ -67,8 +67,22 @@ te512 xs val = fun xs val 0
 -- | numbers. To achieve this you need to compute the mean and variance of the list:
 -- | do this using recursive functions with accumulation.
 
+sqr :: Num a => a -> a
+sqr x = x * x
+
+mean :: Floating a => [a] -> a -> a -> a
+mean [] len acc     = acc / len
+mean (x:xs) len acc = mean xs len (acc + x)
+
+f' :: Floating a => [a] -> a -> a -> a
+f' [] _ acc      = acc
+f' (x:xs) mi acc = f' xs mi $ acc + sqr (x - mi)
+
 te513 :: Floating a => [a] -> a
-te513 = undefined
+te513 xs =  sqrt $ suma / len
+   where len = realToFrac $ length xs
+         mi = mean xs len 0
+         suma = f' xs mi 0
 
 -- ** TE 5.1.4
 --
