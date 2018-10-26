@@ -109,4 +109,6 @@ te514 = undefined
 -- | of a given number using Newton's method, with the given number of iterations.
 -- | Use the halved original number as an initial guess for the method.
 te515 :: (Ord a, Fractional a, Integral b) => a -> b -> a
-te515 = undefined
+te515 val iter = newton val iter 0 
+      where newton _ 0 acc      = acc
+            newton val iter acc = newton val (iter-1) (acc - (acc*acc-val)/(2*acc)) 
