@@ -56,7 +56,10 @@ te511 xs = fun xss hs
 -- | representing the polynomial x^3 - 2x + 3 would be  as  [1, 0, -2, 3].
 
 te512 :: Num a => [a] -> a -> a
-te512 = undefined
+te512 xs val = fun xs val 0
+    where fun :: Num a => [a] -> a -> a -> a
+          fun [] val acc     = acc
+          fun (x:xs) val acc = fun xs val $ acc * val + x
 
 -- ** TE 5.1.3
 --
