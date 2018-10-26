@@ -33,8 +33,19 @@ import Data.Char
 -- | Make sure you keep track of the length of the currently longest word
 -- | too, so you don't call `length` repeatedly on the same word.
 
+getStr :: String -> String -> String
+getStr s1 s2 | len1 < len2 = s2
+             | otherwise   = s1
+           where len1 = length s1
+                 len2 = length s2
+
 te511 :: String -> String
-te511 = undefined
+te511 xs = fun xss hs
+  where xss = words xs
+        hs  = head xss
+        fun :: [String] -> String -> String
+        fun []     s = s
+        fun (x:xs) s = fun xs $ getStr s x
 
 -- ** TE 5.1.2
 --
