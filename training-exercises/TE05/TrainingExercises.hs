@@ -45,7 +45,7 @@ te511 xs = fun xss hs
         hs  = head xss
         fun :: [String] -> String -> String
         fun []     s = s
-        fun (x:xs) s = fun xs $ getStr s x
+        fun (x:xs) s = let newS = getStr s x in newS `seq` fun xs newS
 
 -- ** TE 5.1.2
 --
@@ -59,7 +59,7 @@ te512 :: Num a => [a] -> a -> a
 te512 xs val = fun xs val 0
     where fun :: Num a => [a] -> a -> a -> a
           fun [] val acc     = acc
-          fun (x:xs) val acc = fun xs val $ acc * val + x
+          fun (x:xs) val acc = let newval = acc * val + x in newval `seq` fun xs val newval
 
 -- ** TE 5.1.3
 --
@@ -72,13 +72,14 @@ sqr x = x * x
 
 mean :: Floating a => [a] -> a -> a -> a
 mean [] len acc     = acc / len
-mean (x:xs) len acc = mean xs len (acc + x)
+mean (x:xs) len acc = let s = acc + x in s `seq` mean xs len s
 
 f' :: Floating a => [a] -> a -> a -> a
 f' [] _ acc      = acc
-f' (x:xs) mi acc = f' xs mi $ acc + sqr (x - mi)
+f' (x:xs) mi acc = let s = acc + sqr(x - mi) in s `seq` f' xs mi s
 
 te513 :: Floating a => [a] -> a
+te513 [] = error "Empty list"
 te513 xs =  sqrt $ suma / len
    where len = realToFrac $ length xs
          mi = mean xs len 0
@@ -115,7 +116,29 @@ te513 xs =  sqrt $ suma / len
 -- | do for now.)
 
 te514 :: [(String, Double)] -> [Int]
-te514 = undefined
+te514 [] = error "Empty list"
+te514 xs = fun (20/3.6) 0 xs
+
+fun :: Double -> Int -> [(String, Double)] -> [Int]
+fun  _ id [] = []
+fun v id (("even",s):xs)
+   | newV > 0 = fun newV (id+1) xs
+   | otherwise     = [id]
+  where newV = v - 0.5*s
+
+fun v id (("drop",h):xs) = fun newV (id+1) xs
+  where g    = 9.81
+        newV = sqrt $ v*v + 2*g*h
+
+fun _ id (("turn right",_):("turn left",_):("turn right",_):xs) = [id + 2]
+fun _ id (("turn left",_):("turn right",_):("turn left",_):xs) = [id + 2] 
+fun v id (('t':'u':'r':'n':_,r):xs) 
+  | cenAcc > 5*g = [id]
+  | otherwise    = fun v (id+1) xs
+  where g = 9.81
+        cenAcc = v*v / r
+        
+
 
 -- ** TE 5.1.5 - EXTRA
 --
@@ -123,6 +146,8 @@ te514 = undefined
 -- | of a given number using Newton's method, with the given number of iterations.
 -- | Use the halved original number as an initial guess for the method.
 te515 :: (Ord a, Fractional a, Integral b) => a -> b -> a
-te515 val iter = newton val iter 0 
+te515 val iter = newton val iter (val/2) 
       where newton _ 0 acc      = acc
-            newton val iter acc = newton val (iter-1) (acc - (acc*acc-val)/(2*acc)) 
+            newton val iter acc = let newIter = iter - 1
+                                      newAcc  = acc - (sqr acc - val)/(2*acc)
+                     in newIter `seq` newAcc `seq` newton val newIter newAcc 
