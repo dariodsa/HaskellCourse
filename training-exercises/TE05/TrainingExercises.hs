@@ -56,10 +56,9 @@ te511 xs = fun xss hs
 -- | representing the polynomial x^3 - 2x + 3 would be  as  [1, 0, -2, 3].
 
 te512 :: Num a => [a] -> a -> a
-te512 xs val = fun xs val 0
-    where fun :: Num a => [a] -> a -> a -> a
-          fun [] val acc     = acc
-          fun (x:xs) val acc = let newval = acc * val + x in newval `seq` fun xs val newval
+te512 xs val = fun xs 0
+    where fun [] acc     = acc
+          fun (x:xs) acc = let newval = acc * val + x in newval `seq` fun xs newval
 
 -- ** TE 5.1.3
 --
@@ -122,11 +121,11 @@ te514 xs = fun (20/3.6) 0 xs
 fun :: Double -> Int -> [(String, Double)] -> [Int]
 fun  _ id [] = []
 fun v id (("even",s):xs)
-   | newV > 0 = fun newV (id+1) xs
+   | newV > 0 = let newId = id + 1 in newId `seq` newV `seq` fun newV newId xs
    | otherwise     = [id]
   where newV = v - 0.5*s
 
-fun v id (("drop",h):xs) = fun newV (id+1) xs
+fun v id (("drop",h):xs) = let newId = id + 1 in newId `seq` newV `seq` fun newV newId xs
   where g    = 9.81
         newV = sqrt $ v*v + 2*g*h
 
@@ -134,7 +133,7 @@ fun _ id (("turn right",_):("turn left",_):("turn right",_):xs) = [id + 2]
 fun _ id (("turn left",_):("turn right",_):("turn left",_):xs) = [id + 2] 
 fun v id (('t':'u':'r':'n':_,r):xs) 
   | cenAcc > 5*g = [id]
-  | otherwise    = fun v (id+1) xs
+  | otherwise    = let newId = id + 1 in newId `seq` fun v newId xs
   where g = 9.81
         cenAcc = v*v / r
         
@@ -145,9 +144,9 @@ fun v id (('t':'u':'r':'n':_,r):xs)
 -- | Define a recursive function with accumulation which computes the square root
 -- | of a given number using Newton's method, with the given number of iterations.
 -- | Use the halved original number as an initial guess for the method.
-te515 :: (Ord a, Fractional a, Integral b) => a -> b -> a
-te515 val iter = newton val iter (val/2) 
-      where newton _ 0 acc      = acc
-            newton val iter acc = let newIter = iter - 1
-                                      newAcc  = acc - (sqr acc - val)/(2*acc)
-                     in newIter `seq` newAcc `seq` newton val newIter newAcc 
+te515 :: (Ord a, Fractional a, Num b, Eq b) => a -> b -> a
+te515 val iter = newton iter (val/2) 
+      where newton 0 acc      = acc
+            newton iter acc = let newIter = iter - 1
+                                  newAcc  = acc - (sqr acc - val)/(2*acc)
+                     in newIter `seq` newAcc `seq` newton newIter newAcc 
