@@ -83,14 +83,15 @@ lb21 (x:y:xs) | x == y    = lb21 (y:xs)
 -- the given element a list. It should return -1 if the element is not in the list.
 -- Example:
 -- lb22 3 [1, 3, 5, 1, 3] = 1
+fun22 :: Eq a => a -> Int -> [a] -> Int
+fun22 val _ [] = -1
+fun22 val ind (x:xs) | x == val  = ind
+                           | otherwise = let newId = ind + 1 
+                                         in newId `seq` fun22 val newId xs 
 
 lb22 :: Eq a => a -> [a] -> Int
-lb22 val xs = fun 0 val xs
-  where fun :: Eq a => Int -> a -> [a] -> Int
-        fun _ _ [] = -1
-        fun ind val (x:xs) | x == val  = ind
-                           | otherwise = fun (ind+1) val xs 
-        
+lb22 val xs = fun22 val 0 xs
+                
 
 -- ** L 2.3
 --
@@ -129,4 +130,4 @@ lb24 xs = xs : fun xs newLevel
   where fun :: [Double] -> ([Double] -> [Double]) -> [[Double]]
         fun [_] _  = []
         fun xs  f  = let xs' = f xs
-                        in xs' : fun xs' f
+                     in xs' : fun xs' f
