@@ -72,7 +72,7 @@ import Data.Char
 
 
 lb21 :: Eq a => [a] -> [a]
-lb21 [] = error "Empty list"
+lb21 [] = []
 lb21 [x] = [x]
 lb21 (x:y:xs) | x == y    = lb21 (y:xs)
               | otherwise = x : lb21 (y:xs)
