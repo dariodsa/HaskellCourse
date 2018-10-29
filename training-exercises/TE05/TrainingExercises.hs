@@ -33,9 +33,20 @@ import Data.Char
 -- | Make sure you keep track of the length of the currently longest word
 -- | too, so you don't call `length` repeatedly on the same word.
 
-te511 :: String -> String
-te511 = undefined
+fun11 :: [String] -> String -> Int -> String
+fun11 []     s l1' = s
+fun11 (x:xs) s l1' 
+   |  l1' >= l2'   = fun11 xs s l1'
+   |     otherwise = fun11 xs x l2'
+    where l2' = length x
 
+
+te511 :: String -> String
+te511 xs = fun11 xss hs l1
+  where xss = words xs
+        hs  = head xss
+        l1 = length hs
+        
 -- ** TE 5.1.2
 --
 -- | Define a recursive function with accumulation which takes a list of
@@ -45,7 +56,9 @@ te511 = undefined
 -- | representing the polynomial x^3 - 2x + 3 would be  as  [1, 0, -2, 3].
 
 te512 :: Num a => [a] -> a -> a
-te512 = undefined
+te512 xs val = fun xs 0
+    where fun [] acc     = acc
+          fun (x:xs) acc = let newval = acc * val + x in newval `seq` fun xs newval
 
 -- ** TE 5.1.3
 --
@@ -53,8 +66,23 @@ te512 = undefined
 -- | numbers. To achieve this you need to compute the mean and variance of the list:
 -- | do this using recursive functions with accumulation.
 
+sqr :: Num a => a -> a
+sqr x = x * x
+
+mean :: Floating a => [a] -> a -> a -> a
+mean [] len acc     = acc / len
+mean (x:xs) len acc = let s = acc + x in s `seq` mean xs len s
+
+f' :: Floating a => [a] -> a -> a -> a
+f' [] _ acc      = acc
+f' (x:xs) mi acc = let s = acc + sqr(x - mi) in s `seq` f' xs mi s
+
 te513 :: Floating a => [a] -> a
-te513 = undefined
+te513 [] = error "Empty list"
+te513 xs =  sqrt $ suma / len
+   where len = realToFrac $ length xs
+         mi = mean xs len 0
+         suma = f' xs mi 0
 
 -- ** TE 5.1.4
 --
@@ -87,7 +115,29 @@ te513 = undefined
 -- | do for now.)
 
 te514 :: [(String, Double)] -> [Int]
-te514 = undefined
+te514 [] = error "Empty list"
+te514 xs = fun (20/3.6) 0 xs
+
+fun :: Double -> Int -> [(String, Double)] -> [Int]
+fun  _ id [] = []
+fun v id (("even",s):xs)
+   | newV > 0 = let newId = id + 1 in newId `seq` newV `seq` fun newV newId xs
+   | otherwise     = [id]
+  where newV = v - 0.5*s
+
+fun v id (("drop",h):xs) = let newId = id + 1 in newId `seq` newV `seq` fun newV newId xs
+  where g    = 9.81
+        newV = sqrt $ v*v + 2*g*h
+
+fun _ id (("turn right",_):("turn left",_):("turn right",_):xs) = [id + 2]
+fun _ id (("turn left",_):("turn right",_):("turn left",_):xs) = [id + 2] 
+fun v id (('t':'u':'r':'n':_,r):xs) 
+  | cenAcc > 5*g = [id]
+  | otherwise    = let newId = id + 1 in newId `seq` fun v newId xs
+  where g = 9.81
+        cenAcc = v*v / r
+        
+
 
 -- ** TE 5.1.5 - EXTRA
 --
@@ -95,4 +145,8 @@ te514 = undefined
 -- | of a given number using Newton's method, with the given number of iterations.
 -- | Use the halved original number as an initial guess for the method.
 te515 :: (Ord a, Fractional a, Integral b) => a -> b -> a
-te515 = undefined
+te515 val iter = newton iter (val/2) 
+      where newton 0 acc      = acc
+            newton iter acc = let newIter = iter - 1
+                                  newAcc  = acc - (sqr acc - val)/(2*acc)
+                     in newIter `seq` newAcc `seq` newton newIter newAcc 
