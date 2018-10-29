@@ -33,20 +33,20 @@ import Data.Char
 -- | Make sure you keep track of the length of the currently longest word
 -- | too, so you don't call `length` repeatedly on the same word.
 
-getStr :: String -> String -> String
-getStr s1 s2 | len1 < len2 = s2
-             | otherwise   = s1
-           where len1 = length s1
-                 len2 = length s2
+fun11 :: [String] -> String -> Int -> String
+fun11 []     s l1' = s
+fun11 (x:xs) s l1' 
+   |  l1' >= l2'   = fun11 xs s l1'
+   |     otherwise = fun11 xs x l2'
+    where l2' = length x
+
 
 te511 :: String -> String
-te511 xs = fun xss hs
+te511 xs = fun11 xss hs l1
   where xss = words xs
         hs  = head xss
-        fun :: [String] -> String -> String
-        fun []     s = s
-        fun (x:xs) s = let newS = getStr s x in newS `seq` fun xs newS
-
+        l1 = length hs
+        
 -- ** TE 5.1.2
 --
 -- | Define a recursive function with accumulation which takes a list of
