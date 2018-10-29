@@ -144,7 +144,7 @@ fun v id (('t':'u':'r':'n':_,r):xs)
 -- | Define a recursive function with accumulation which computes the square root
 -- | of a given number using Newton's method, with the given number of iterations.
 -- | Use the halved original number as an initial guess for the method.
-te515 :: (Ord a, Fractional a, Num b, Eq b) => a -> b -> a
+te515 :: (Ord a, Fractional a, Integral b) => a -> b -> a
 te515 val iter = newton iter (val/2) 
       where newton 0 acc      = acc
             newton iter acc = let newIter = iter - 1
