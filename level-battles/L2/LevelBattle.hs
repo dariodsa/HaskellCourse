@@ -86,8 +86,8 @@ lb21 (x:y:xs) | x == y    = lb21 (y:xs)
 fun22 :: Eq a => a -> Int -> [a] -> Int
 fun22 val _ [] = -1
 fun22 val ind (x:xs) | x == val  = ind
-                           | otherwise = let newId = ind + 1 
-                                         in newId `seq` fun22 val newId xs 
+                     | otherwise = let newId = ind + 1 
+                                   in newId `seq` fun22 val newId xs 
 
 lb22 :: Eq a => a -> [a] -> Int
 lb22 val xs = fun22 val 0 xs
