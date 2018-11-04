@@ -72,7 +72,10 @@ import Data.Char
 
 
 lb21 :: Eq a => [a] -> [a]
-lb21 = undefined
+lb21 [] = []
+lb21 [x] = [x]
+lb21 (x:y:xs) | x == y    = lb21 (y:xs)
+              | otherwise = x : lb21 (y:xs)
 
 -- ** L 2.2
 --
@@ -80,9 +83,15 @@ lb21 = undefined
 -- the given element a list. It should return -1 if the element is not in the list.
 -- Example:
 -- lb22 3 [1, 3, 5, 1, 3] = 1
+fun22 :: Eq a => a -> Int -> [a] -> Int
+fun22 val _ [] = -1
+fun22 val ind (x:xs) | x == val  = ind
+                     | otherwise = let newId = ind + 1 
+                                   in newId `seq` fun22 val newId xs 
 
 lb22 :: Eq a => a -> [a] -> Int
-lb22 = undefined
+lb22 val xs = fun22 val 0 xs
+                
 
 -- ** L 2.3
 --
@@ -91,7 +100,15 @@ lb22 = undefined
 -- about negative numbers)
 
 lb23 :: Int -> Int -> Int
-lb23 = undefined
+lb23 x y 
+  | x == 0 || y == 0 = 0  
+  |      otherwise   = fun x y x
+  where fun :: Int -> Int -> Int -> Int
+        fun _ 1 acc = acc
+        fun x y acc = let 
+                         newY   = y-1 
+                         newAcc = acc + x 
+                      in newY `seq` newAcc `seq` fun x newY newAcc
 
 -- ** L 2.4
 --
@@ -103,5 +120,14 @@ lb23 = undefined
 -- lb24 [1.0, 2.0, 3.0, 4.0] = [[1.0, 2.0, 3.0, 4.0], [3.0, 5.0, 7.0], [8.0, 12.0], [20.0]]
 -- In the case of an empty list, return an empty list.
 
+newLevel :: [Double] -> [Double]
+newLevel    [x]   = []
+newLevel (x:y:xs) = (x+y) : newLevel (y:xs)
+
 lb24 :: [Double] -> [[Double]]
-lb24 = undefined
+lb24 [] = []
+lb24 xs = xs : fun xs newLevel 
+  where fun :: [Double] -> ([Double] -> [Double]) -> [[Double]]
+        fun [_] _  = []
+        fun xs  f  = let xs' = f xs
+                     in xs' : fun xs' f
