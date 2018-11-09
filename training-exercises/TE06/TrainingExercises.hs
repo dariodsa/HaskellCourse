@@ -33,7 +33,7 @@ import Data.Char
 -- | (Using eta reduction)
 
 multiplyWith2 :: Int -> Int
-multiplyWith2 = undefined
+multiplyWith2 = (*2)
 
 
 -- ** TE 6.1.2
@@ -41,7 +41,7 @@ multiplyWith2 = undefined
 -- | (Using eta reduction)
 
 add1 :: Int -> Int
-add1 = undefined
+add1 = (+1)
 
 
 -- ** TE 6.1.3
@@ -49,7 +49,7 @@ add1 = undefined
 -- | Achieve that using functions multiplyWith2 and add1.
 
 te613 :: Int -> Int
-te613 = undefined
+te613 x = add1 $ multiplyWith2 x
 
 
 -- | very small lecture :)
@@ -62,7 +62,7 @@ te613 = undefined
 -- | (Using sections)
 
 lessThanTen :: Int -> Bool
-lessThanTen = undefined
+lessThanTen = (<10)
 
 
 {- * 6.2 Higher-order funtions  -}
@@ -74,7 +74,7 @@ lessThanTen = undefined
 -- | three times to the given number.
 
 apply3Times :: (Int -> Int) -> Int -> Int
-apply3Times = undefined
+apply3Times f x = f( f (f x))
 
 
 -- ** TE 6.2.2
@@ -82,7 +82,7 @@ apply3Times = undefined
 -- | list using given function.
 
 filterElem :: (Int -> Bool) -> [Int] -> [Int]
-filterElem = undefined
+filterElem = 
 
 
 -- ** TE 6.2.3
