@@ -33,7 +33,7 @@ import Data.Char
 -- | (Using eta reduction)
 
 multiplyWith2 :: Int -> Int
-multiplyWith2 = undefined
+multiplyWith2 = (*2)
 
 
 -- ** TE 6.1.2
@@ -41,7 +41,7 @@ multiplyWith2 = undefined
 -- | (Using eta reduction)
 
 add1 :: Int -> Int
-add1 = undefined
+add1 = (+1)
 
 
 -- ** TE 6.1.3
@@ -49,7 +49,7 @@ add1 = undefined
 -- | Achieve that using functions multiplyWith2 and add1.
 
 te613 :: Int -> Int
-te613 = undefined
+te613 x = add1 $ multiplyWith2 x
 
 
 -- | very small lecture :)
@@ -62,7 +62,7 @@ te613 = undefined
 -- | (Using sections)
 
 lessThanTen :: Int -> Bool
-lessThanTen = undefined
+lessThanTen = (<10)
 
 
 {- * 6.2 Higher-order funtions  -}
@@ -74,7 +74,7 @@ lessThanTen = undefined
 -- | three times to the given number.
 
 apply3Times :: (Int -> Int) -> Int -> Int
-apply3Times = undefined
+apply3Times f x = f( f (f x))
 
 
 -- ** TE 6.2.2
@@ -82,15 +82,17 @@ apply3Times = undefined
 -- | list using given function.
 
 filterElem :: (Int -> Bool) -> [Int] -> [Int]
-filterElem = undefined
+filterElem _  []    = []
+filterElem f (x:xs) | f x       = x : filterElem f xs
+                    | otherwise = filterElem f xs
 
 
 -- ** TE 6.2.3
 -- | Define a recursive function that takes a function and a list of Ints and applies
 -- | given function to each element in list.
-
 applyOnElem :: (Int -> Int) -> [Int] -> [Int]
-applyOnElem = undefined
+applyOnElem _  []    = []
+applyOnElem f (x:xs) = f x : applyOnElem f xs
 
 
 -- ** TE 6.2.4
@@ -98,7 +100,7 @@ applyOnElem = undefined
 -- (Using filterElem, lessThanTen, and eta reduction)
 
 te624 :: [Int] -> [Int]
-te624 = undefined
+te624 = filterElem lessThanTen  
 
 
 -- ** TE 6.2.5
@@ -106,7 +108,7 @@ te624 = undefined
 -- Define a function that takes a list of Ints and adds 3 to each element in the given list.
 
 te625 :: [Int] -> [Int]
-te625 = undefined
+te625 = applyOnElem (apply3Times add1)  
 
 
 
@@ -116,14 +118,14 @@ te625 = undefined
 -- Rewrite task te624 using built-in filter function
 
 te631 :: [Int] -> [Int]
-te631 = undefined
+te631 = filter (<10)
 
 
 -- ** TE 6.3.2
 -- Rewrite task te625 using built-in map function
 
 te632 :: [Int] -> [Int]
-te632 = undefined
+te632 = map (apply3Times add1)
 
 
 -- **  TE 6.3.3
@@ -131,7 +133,7 @@ te632 = undefined
 -- that are less than 10. You must use map, filter, lessThanTen and eta reduction.
 
 te633 :: [[Int]] -> [[Int]]
-te633 = undefined
+te633 = map (filter lessThanTen)
 
 
 
@@ -141,18 +143,18 @@ te633 = undefined
 -- Rewrite task te631 using lambda expressions
 
 te641 :: [Int] -> [Int]
-te641 = undefined
+te641 = \xs -> filter (<10) xs
 
 
 -- ** TE 6.4.2
 -- Rewrite task te632 using lambda expressions
 
 te642 :: [Int] -> [Int]
-te642 = undefined
+te642 = \xs -> map (apply3Times add1) xs
 
 
 -- **  TE 6.4.3
 -- Rewrite task te633 using lambda expressions
 
 te643 :: [[Int]] -> [[Int]]
-te643 = undefined
+te643 = \xss -> map (filter lessThanTen) xss
