@@ -94,7 +94,7 @@ te721 = sortBy compare'
 -- -> Example: [("tommy", 23), ("mark", 5), ("lisa", 17), ("denny", 40)] -> ([("tommy",23),("denny",40)],[("mark",5),("lisa",17)])
 
 te722 :: [(String, Int)] -> ([(String, Int)], [(String, Int)])
-te722 = partition ((>20) . snd)  . sortBy compare'  
+te722 = partition ((>20) . snd) . reverse . sortBy compare'  
 
 -- ** TE 7.2.3
 --
