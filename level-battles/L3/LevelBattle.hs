@@ -36,7 +36,7 @@ import Data.Char ( chr, ord )
 -}
 
 lb31 :: Char -> Bool
-lb31 = undefined
+lb31 = flip elem ['a'..'z']
 
 {- * HIGHER ORDER FUNCTIONS, MAP, FILTER & LAMBDA EXPRESSIONS                 -}
 
@@ -57,7 +57,7 @@ lb31 = undefined
 -}
 
 lb32 :: String -> [Int] -> String
-lb32 = undefined
+lb32 xs ys =undefined -- filter  . zip xs ys
 
 {- * COMPOSITION                                                              -}
 
@@ -79,4 +79,4 @@ lb32 = undefined
 -}
 
 lb33 :: [Int -> Int] -> Int -> Bool
-lb33 = undefined
+lb33 fs = foldl (||) False . [ f x | f <- fs] 
