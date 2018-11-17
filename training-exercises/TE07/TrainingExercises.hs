@@ -35,7 +35,7 @@ import Data.Ord
 -- -> Example: [("Marvin", 4), ("Kobra1997", 7), ("Ryder", 1)] ==> 5.
 
 te711 :: [(String, Int)] -> Int
-te711 = undefined
+te711 = sum . map snd . filter ((<7) . length . fst)
 
 -- ** TE 7.1.2
 --
@@ -46,7 +46,7 @@ te711 = undefined
 -- -> Example: [2.0, -3.0, 4.0, 1.0] ==> [1.0, 4.0, 9.0, 16.0].
 
 te712 :: (Floating a, Ord a) => [a] -> [a]
-te712 = undefined
+te712 = sort . map (^2) 
 
 -- ** TE 7.1.3
 --
@@ -55,8 +55,8 @@ te712 = undefined
 --
 -- -> Example: [7, 0, 2, 3, 1, 6, 7] ==> [7, 2, 1, 7].
 
-te713 :: [a] -> [a]
-te713 = undefined
+te713 :: (Integral a) => [a] -> [a]
+te713 = map snd . filter (odd . fst) . zip [1..]
 
 
 {- * 7.2 Useful higher order functions -}
@@ -71,8 +71,17 @@ te713 = undefined
 --
 -- -> Example: [("qui-gon", 3), ("deathsticks", 4), ("Ani", 2)] -> [("deathsticks", 4), ("qui-gon", 3), ("Ani", 2)]
 
+type User = String
+type LoginTime = Int
+type UserInfo = (User, LoginTime)
+
+--compare' :: UserInfo -> UserInfo -> Bool
+compare' x' y' = let x = snd x'
+                     y = snd y' 
+                 in compare y x
+
 te721 :: [(String, Int)] -> [(String, Int)]
-te721 = undefined
+te721 = sortBy compare'
 
 -- ** TE 7.2.2
 --
@@ -85,7 +94,7 @@ te721 = undefined
 -- -> Example: [("tommy", 23), ("mark", 5), ("lisa", 17), ("denny", 40)] -> ([("tommy",23),("denny",40)],[("mark",5),("lisa",17)])
 
 te722 :: [(String, Int)] -> ([(String, Int)], [(String, Int)])
-te722 = undefined
+te722 = partition ((>20) . snd)  
 
 -- ** TE 7.2.3
 --
@@ -95,4 +104,4 @@ te722 = undefined
 -- -> Example: [4.0, 5.0, 6.0, 1.0] -> [1.0, 3.0, 6.0, 9.0] -> [4.0, 15.0, 36.0, 9.0]
 
 te723 :: Num a => [a] -> [a] -> [a]
-te723 = undefined
+te723 xs = zipWith (*) xs  
