@@ -94,7 +94,7 @@ te721 = sortBy compare'
 -- -> Example: [("tommy", 23), ("mark", 5), ("lisa", 17), ("denny", 40)] -> ([("tommy",23),("denny",40)],[("mark",5),("lisa",17)])
 
 te722 :: [(String, Int)] -> ([(String, Int)], [(String, Int)])
-te722 = partition ((>20) . snd) . reverse . sortBy compare'  
+te722 = partition ((>20) . snd)  
 
 -- ** TE 7.2.3
 --
@@ -104,4 +104,4 @@ te722 = partition ((>20) . snd) . reverse . sortBy compare'
 -- -> Example: [4.0, 5.0, 6.0, 1.0] -> [1.0, 3.0, 6.0, 9.0] -> [4.0, 15.0, 36.0, 9.0]
 
 te723 :: Num a => [a] -> [a] -> [a]
-te723 xs = map ( uncurry (*) ) . zip xs  
+te723 xs = zipWith (*) xs  
