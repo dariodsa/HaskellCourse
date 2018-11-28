@@ -36,7 +36,9 @@ import Data.Char ( chr, ord )
 -}
 
 lb31 :: Char -> Bool
-lb31 = flip elem ['a'..'z']
+lb31 = let aVal = ord 'A'
+           zVal = ord 'Z' 
+       in (\x-> x <= zVal && x >= aVal) . ord 
 
 {- * HIGHER ORDER FUNCTIONS, MAP, FILTER & LAMBDA EXPRESSIONS                 -}
 
@@ -57,7 +59,7 @@ lb31 = flip elem ['a'..'z']
 -}
 
 lb32 :: String -> [Int] -> String
-lb32 xs ys =undefined -- filter  . zip xs ys
+lb32 xs  =  map (chr) . map (\(x,y) -> ord x + y) . filter (\(_,x) -> x >= (ord (minBound :: Char)) && x<= (ord (maxBound :: Char))) . zip xs 
 
 {- * COMPOSITION                                                              -}
 
@@ -79,4 +81,4 @@ lb32 xs ys =undefined -- filter  . zip xs ys
 -}
 
 lb33 :: [Int -> Int] -> Int -> Bool
-lb33 fs = foldl (||) False . [ f x | f <- fs] 
+lb33 fs = foldl (\acc x -> acc || (x>5)) False . flip map fs . flip id
