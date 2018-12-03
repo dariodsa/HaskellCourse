@@ -36,7 +36,9 @@ import Data.Char ( chr, ord )
 -}
 
 lb31 :: Char -> Bool
-lb31 = undefined
+lb31 = let aVal = ord 'A'
+           zVal = ord 'Z' 
+       in (\x-> x <= zVal && x >= aVal) . ord 
 
 {- * HIGHER ORDER FUNCTIONS, MAP, FILTER & LAMBDA EXPRESSIONS                 -}
 
@@ -57,7 +59,7 @@ lb31 = undefined
 -}
 
 lb32 :: String -> [Int] -> String
-lb32 = undefined
+lb32 xs  =  map (chr) . map (\(x,y) -> ord x + y) . filter (\(_,x) -> x >= (ord (minBound :: Char)) && x<= (ord (maxBound :: Char))) . zip xs 
 
 {- * COMPOSITION                                                              -}
 
@@ -79,4 +81,4 @@ lb32 = undefined
 -}
 
 lb33 :: [Int -> Int] -> Int -> Bool
-lb33 = undefined
+lb33 fs = foldl (\acc x -> acc || (x>5)) False . flip map fs . flip id
