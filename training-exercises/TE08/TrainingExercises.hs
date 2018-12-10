@@ -39,15 +39,11 @@ import Data.Ord
 -- -> Example: "ababbba" ==> "ababa"
 -- (we remove one pair of "bb", the third letter doesn't have a pair to be removed).
 
-react :: Char -> Char -> Bool
-react x y = x == y
-
-f2 :: String -> Char -> String
-f2 [] c1         = [c1]
-f2 s1@(c2:s2) c1 = if react c1 c2 then s2 else c1:s1
 
 te811 :: String -> String
-te811 = reverse . foldl (f2) "" 
+te811 = foldr f2 "" 
+   where  f2 c1 []         = [c1]
+          f2 c1 s1@(c2:s2) = if c1 == c2 then s2 else c1:s1
 
 -- ** TE 8.1.2
 --
@@ -59,7 +55,7 @@ isVowels :: Char -> Bool
 isVowels = (`elem` ['a', 'e', 'i', 'o', 'u']) . (toLower)
 
 te812 :: String -> Int
-te812 = foldl (+) 0 . map (\_ -> 1) . filter (isVowels)
+te812 = foldl (\acc x -> if isVowels x then acc+1 else acc) 0
 
 
 {- * 8.2 Data types  -}
@@ -107,12 +103,12 @@ data Transaction = Incoming Int
 --
 -- -> Example: [Incoming 15, Outgoing 10, Incoming 3] ==> 8
 
-sumTransaction :: Transaction -> Int -> Int
-sumTransaction (Incoming val) acc = acc + val
-sumTransaction (Outgoing val) acc = acc - val
+sumTransaction :: Int -> Transaction -> Int
+sumTransaction acc (Incoming val) = acc + val
+sumTransaction acc (Outgoing val) = acc - val
 
 te824 :: [Transaction] -> Int
-te824 = foldr (sumTransaction) 0
+te824 = foldl sumTransaction 0
 
 -- ** TE 8.2.5
 --
@@ -124,7 +120,7 @@ te824 = foldr (sumTransaction) 0
 -- -> Example: [Outgoing 10, Incoming 15, Incoming 3] ==> False
 
 te825 :: [Transaction] -> Bool
-te825 = (>= 0) . foldl (tryTransaction) 0  
+te825 = (>= 0) . foldl tryTransaction 0  
    where tryTransaction (-1) _             = (-1)
          tryTransaction acc (Incoming val) = acc + val
          tryTransaction acc (Outgoing val) = if acc >= val then acc - val 
