@@ -39,8 +39,11 @@ import Data.Ord
 -- -> Example: "ababbba" ==> "ababa"
 -- (we remove one pair of "bb", the third letter doesn't have a pair to be removed).
 
+
 te811 :: String -> String
-te811 = undefined
+te811 = foldr f2 "" 
+   where  f2 c1 []         = [c1]
+          f2 c1 s1@(c2:s2) = if c1 == c2 then s2 else c1:s1
 
 -- ** TE 8.1.2
 --
@@ -48,8 +51,11 @@ te811 = undefined
 --
 -- -> Example: "Haskell" ==> 2
 
+isVowels :: Char -> Bool 
+isVowels = (`elem` ['a', 'e', 'i', 'o', 'u']) . (toLower)
+
 te812 :: String -> Int
-te812 = undefined
+te812 = foldl (\acc x -> if isVowels x then acc+1 else acc) 0
 
 
 {- * 8.2 Data types  -}
@@ -59,7 +65,14 @@ te812 = undefined
 -- | Define a new data type `Day` that can be any day of the week.
 -- Make sure to derive Show.
 
-data Day
+data Day = Monday 
+         | Tuesday
+         | Wednesday
+         | Thursday
+         | Friday
+         | Saturday
+         | Sunday 
+         deriving Show
 
 -- ** TE 8.2.2
 --
@@ -69,7 +82,8 @@ data Day
 -- -> Example: Thursday  ==> True
 
 te822 :: Day -> Bool
-te822 undefined
+te822 Thursday = True
+te822    _     = False
 
 -- ** TE 8.2.3
 --
@@ -78,7 +92,9 @@ te822 undefined
 -- Both Incoming and Outgoing transactions should have an Int value.
 -- Make sure to derive Show.
 
-data Transaction
+data Transaction = Incoming Int  
+                 | Outgoing Int
+                 deriving Show
 
 -- ** TE 8.2.4
 --
@@ -87,8 +103,12 @@ data Transaction
 --
 -- -> Example: [Incoming 15, Outgoing 10, Incoming 3] ==> 8
 
+sumTransaction :: Int -> Transaction -> Int
+sumTransaction acc (Incoming val) = acc + val
+sumTransaction acc (Outgoing val) = acc - val
+
 te824 :: [Transaction] -> Int
-te824 = undefined
+te824 = foldl sumTransaction 0
 
 -- ** TE 8.2.5
 --
@@ -100,4 +120,9 @@ te824 = undefined
 -- -> Example: [Outgoing 10, Incoming 15, Incoming 3] ==> False
 
 te825 :: [Transaction] -> Bool
-te825 = undefined
+te825 = (>= 0) . foldl tryTransaction 0  
+   where tryTransaction (-1) _             = (-1)
+         tryTransaction acc (Incoming val) = acc + val
+         tryTransaction acc (Outgoing val) = if acc >= val then acc - val 
+                                                           else -1
+
