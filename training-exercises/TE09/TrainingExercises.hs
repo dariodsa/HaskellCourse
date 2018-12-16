@@ -31,7 +31,7 @@ import Data.Ord
 --
 -- Make sure to derive `Show` and `Eq`.
 --
-data Pair a b = Pair a b deriving (Show Eq)
+data Pair a b = Pair a b deriving (Show, Eq)
 
 -- ** TE 9.1.2
 --
@@ -69,7 +69,8 @@ te914 (Pair a b) = Pair b a
 -- -> Example: [Pair 1 'a', Pair 4 'c'] inc toupper ==> [Pair 2 'A', Pair 5 'C']
 
 te915 :: [Pair a b] -> (a -> a) -> (b -> b) -> [Pair a b]
-te915 = undefined  
+te915 xs f1 f2 = map (newPair f1 f2) xs
+   where newPair f1 f2 (Pair x y) = Pair (f1 x) (f2 y)
 
 {- * 9.2 Maybe Type  -}
 
@@ -83,7 +84,8 @@ te915 = undefined
 -- -> Example: 0 Nothing         ==> 0
 
 te921 :: a -> Maybe a -> a
-te921 = undefined
+te921 def Nothing = def
+te921 _ (Just x) = x
 
 -- ** TE 9.2.2
 --
@@ -95,8 +97,13 @@ te921 = undefined
 -- -> Example: [Just True, Just True, Just True] ==> True
 -- -> Example: [Just True, Just True, Nothing]   ==> False
 
+getRes :: Maybe Bool -> Bool
+getRes Nothing      = False
+getRes (Just False) = False
+getRes _            = True
+
 te922 :: [Maybe Bool] -> Bool
-te922 = undefined
+te922 = foldl (\acc x -> acc && getRes x) True
 
 
 {- * 9.3 Fmap  -}
@@ -116,7 +123,10 @@ te922 = undefined
 -- -> Example: [Just True, Just False, Nothing]   ==> [Just 5, Just 1, Nothing]
 
 te931 :: [Maybe Bool] -> [Maybe Int]
-te931 = undefined
+te931 = map transform 
+  where transform (Just True)  = Just 5
+        transform (Just False) = Just 1
+        transform      _       = Nothing
 
 {- * 9.4 Recursive Data Structures  -}
 
@@ -137,7 +147,8 @@ data Tree a = Nil
 -- -> Example: Node 1 (Node 2 Nil Nil) (Node 4 Nil Nil) ==> 7
 
 te942 :: Num a => Tree a -> a
-te942 undefined
+te942 Nil = 0
+te942 (Node val left right) = te942 left + te942 right + val
 
 -- ** TE 9.4.3
 --
@@ -146,5 +157,17 @@ te942 undefined
 -- -> Example: Node 1 (Node 2 Nil Nil) (Node 4 Nil Nil) ==> Just 4
 
 -- (>) :: Ord a => a -> a -> Bool
+
+maxVal :: (Ord a) =>  Maybe a -> Maybe a -> Maybe a
+maxVal Nothing Nothing =  Nothing
+maxVal (Just x) (Just y) = Just $ max x y
+maxVal (Just x) Nothing = Just $ x 
+maxVal Nothing (Just y) = Just $ y 
+
 te943 :: Ord a => Tree a -> Maybe a
-te943 = undefined
+te943 Nil = Nothing
+te943 (Node val left right) = let 
+       mix = maxVal  (te943 left) (te943 right)
+       in case mix of 
+          Nothing       -> Just val
+          Just (mixMax) -> Just ( max val mixMax)
