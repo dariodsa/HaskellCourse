@@ -69,8 +69,8 @@ te914 (Pair a b) = Pair b a
 -- -> Example: [Pair 1 'a', Pair 4 'c'] inc toupper ==> [Pair 2 'A', Pair 5 'C']
 
 te915 :: [Pair a b] -> (a -> a) -> (b -> b) -> [Pair a b]
-te915 xs f1 f2 = map (newPair f1 f2) xs
-   where newPair f1 f2 (Pair x y) = Pair (f1 x) (f2 y)
+te915 xs f1 f2 = map newPair xs
+   where newPair (Pair x y) = Pair (f1 x) (f2 y)
 
 {- * 9.2 Maybe Type  -}
 
@@ -84,8 +84,7 @@ te915 xs f1 f2 = map (newPair f1 f2) xs
 -- -> Example: 0 Nothing         ==> 0
 
 te921 :: a -> Maybe a -> a
-te921 def Nothing = def
-te921 _ (Just x) = x
+te921 = flip maybe id
 
 -- ** TE 9.2.2
 --
@@ -103,7 +102,7 @@ getRes (Just False) = False
 getRes _            = True
 
 te922 :: [Maybe Bool] -> Bool
-te922 = foldl (\acc x -> acc && getRes x) True
+te922 = all (te921 False)
 
 
 {- * 9.3 Fmap  -}
@@ -123,10 +122,9 @@ te922 = foldl (\acc x -> acc && getRes x) True
 -- -> Example: [Just True, Just False, Nothing]   ==> [Just 5, Just 1, Nothing]
 
 te931 :: [Maybe Bool] -> [Maybe Int]
-te931 = map transform 
-  where transform (Just True)  = Just 5
-        transform (Just False) = Just 1
-        transform      _       = Nothing
+te931 = map (fmap transform)
+  where transform True  = 5
+        transform False = 1
 
 {- * 9.4 Recursive Data Structures  -}
 
@@ -158,16 +156,8 @@ te942 (Node val left right) = te942 left + te942 right + val
 
 -- (>) :: Ord a => a -> a -> Bool
 
-maxVal :: (Ord a) =>  Maybe a -> Maybe a -> Maybe a
-maxVal Nothing Nothing =  Nothing
-maxVal (Just x) (Just y) = Just $ max x y
-maxVal (Just x) Nothing = Just $ x 
-maxVal Nothing (Just y) = Just $ y 
-
 te943 :: Ord a => Tree a -> Maybe a
 te943 Nil = Nothing
-te943 (Node val left right) = let 
-       mix = maxVal  (te943 left) (te943 right)
-       in case mix of 
-          Nothing       -> Just val
-          Just (mixMax) -> Just ( max val mixMax)
+te943 (Node val left right) = 
+      let mix = max  (te943 left) (te943 right)
+      in max (Just val) mix
