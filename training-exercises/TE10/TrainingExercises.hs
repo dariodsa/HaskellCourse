@@ -43,6 +43,19 @@ data MyList a = Empty | Cons a (MyList a) deriving Show
 
 -- TODO instance ...
 
+myListToArray :: MyList a -> [a]
+myListToArray Empty = []
+myListToArray (Cons a l1) = a:(myListToArray l1)
+
+instance Eq a => Eq (MyList a) where
+  Empty == Empty = True
+  Empty == _     = False
+  _     == Empty = False
+  l1    == l2    = list1 == list2
+    where list1 = myListToArray l1 
+          list2 = myListToArray l2
+   
+
 -- ** TE 10.1.2
 
 -- Take a look at the Christmas Tree data type - it's your normal tree, except
@@ -57,7 +70,12 @@ data ChristmasTree a = Ornament
 -- all elements in their in traversal.
 
 treeToList :: ChristmasTree a -> [a]
-treeToList = undefined
+treeToList Ornament          = []
+treeToList (Light val t1 t2) = 
+       let leftSide  = treeToList t1
+           rightSide = treeToList t2
+       in leftSide ++ [val] ++ rightSide
+
 
 -- ** TE 10.1.3
 -- Let's say that two trees are equal if they contain the same elements
@@ -65,3 +83,4 @@ treeToList = undefined
 -- that implements that notion of equality.
 
 -- TODO instance ...
+
