@@ -47,11 +47,18 @@ myListToArray :: MyList a -> [a]
 myListToArray Empty = []
 myListToArray (Cons a l1) = a:(myListToArray l1)
 
+compareList :: (Eq a) => [a] -> [a] -> Bool
+compareList l1 l2 = len1 == len2 && len1 == lenUnion && lenDiff == 0
+      where len1     = length l1
+            len2     = length l2
+            lenUnion = length $ union l1 l2
+            lenDiff  = length $ l1 \\ l2
+
 instance Eq a => Eq (MyList a) where
   Empty == Empty = True
   Empty == _     = False
   _     == Empty = False
-  l1    == l2    = list1 == list2
+  l1    == l2    = compareList list1 list2
     where list1 = myListToArray l1 
           list2 = myListToArray l2
    
@@ -83,4 +90,10 @@ treeToList (Light val t1 t2) =
 -- that implements that notion of equality.
 
 -- TODO instance ...
-
+instance Eq  a => Eq (ChristmasTree a) where
+   Ornament == Ornament = True
+   _        == Ornament = False
+   Ornament == _        = False
+   t1       == t2       = compareList list1 list2
+       where list1 = treeToList t1
+             list2 = treeToList t2
