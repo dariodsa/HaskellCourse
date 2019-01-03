@@ -48,7 +48,8 @@ module LevelBattle where
   HINT: We are basically defining a linked list.
 -}
 
-data N
+data N = Base
+       | Succ N
 
 {- * DERIVING & DEFINING TYPECLASS INSTANCES -}
 
@@ -78,20 +79,53 @@ data N
   use pattern matching just as easily.
 -}
 
+getLen :: N -> Int
+getLen = getLen' 1
+  where getLen' n Base = n
+        getLen' n (Succ n') = getLen' (n+1) n'
+
+construct :: Int -> N
+construct n = if n < 0 then error "negative size" 
+              else construct2 $ toInteger n
+
+construct2 :: Integer -> N
+construct2 n = construct' (n-1) Base
+  where construct' 0 acc = acc
+        construct' n acc = construct' (n-1) (Succ acc)
+
+instance Eq N where
+  n1 == n2 = l1 == l2
+    where l1 = getLen n1
+          l2 = getLen n2
+
 instance Num N where
-  n1 + n2     = undefined
-  n1 - n2     = undefined
-  n1 * n2     = undefined
-  abs         = undefined
-  signum      = undefined
-  fromInteger = undefined
+  n1 + n2     = construct sum
+    where sum = l1 + l2
+          l1  = getLen n1
+          l2  = getLen n2
+
+  n1 - n2     = if dif < 0 then error "negative size"
+                else construct dif
+    where dif = l1 - l2
+          l1  = getLen n1
+          l2  = getLen n2
+
+  n1 * n2     = construct mul
+    where mul = l1 * l2
+          l1  = getLen n1
+          l2  = getLen n2
+
+  abs      x    = x
+  signum   _    = Base
+  fromInteger n = if n < 0 then error "Number can't be less than zero."
+                  else construct2 n
 
 instance Enum N where
-  toEnum   = undefined
-  fromEnum = undefined
+  fromEnum = getLen
+  toEnum   = construct
 
 instance Show N where
-  show = undefined
+  show = show . getLen
 
 {- * RECORDS, PARAMETERISED TYPES, MAYBE TYPE, FMAP -}
 
@@ -113,7 +147,10 @@ instance Show N where
   converts / "lifts" a function 'a -> b' into 'f a -> f b'.
 -}
 
-data Ingredient
+data Ingredient a = Ingredient {
+                     name   :: String,
+                     amount :: Maybe a
+                  } deriving Show
 
 convert :: ( a -> b ) -> Ingredient a -> Ingredient b
-convert = undefined
+convert fun (Ingredient name x) = Ingredient name $ fmap fun x 
