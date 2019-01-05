@@ -55,12 +55,9 @@ compareList l1 l2 = len1 == len2 && len1 == lenUnion && lenDiff == 0
             lenDiff  = length $ l1 \\ l2
 
 instance Eq a => Eq (MyList a) where
-  Empty == Empty = True
-  Empty == _     = False
-  _     == Empty = False
-  l1    == l2    = compareList list1 list2
-    where list1 = myListToArray l1 
-          list2 = myListToArray l2
+    l1 == l2 = compareList list1 list2
+     where list1 = myListToArray l1 
+           list2 = myListToArray l2
    
 
 -- ** TE 10.1.2
@@ -91,9 +88,6 @@ treeToList (Light val t1 t2) =
 
 -- TODO instance ...
 instance Eq  a => Eq (ChristmasTree a) where
-   Ornament == Ornament = True
-   _        == Ornament = False
-   Ornament == _        = False
-   t1       == t2       = compareList list1 list2
-       where list1 = treeToList t1
-             list2 = treeToList t2
+      t1  == t2 = compareList list1 list2
+         where list1 = treeToList t1
+               list2 = treeToList t2
