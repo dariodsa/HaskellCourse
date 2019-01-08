@@ -41,13 +41,20 @@ import Prelude hiding ( head, tail )
   'List' data type.
 -}
 
-data List a
+data List a = Item a (List a)
+            | Last a
 
 fromList :: [ a ] -> Maybe ( List a )
-fromList = undefined
+fromList []     = Nothing
+fromList (x:xs) = Just $ fromList2 xs (Last x)
+    where fromList2 [] val     = val
+          fromList2 (x:[]) val = Item x val
+          fromList2 (x:xs) val = fromList2 xs $ Item (x) val 
+          
 
 toList :: List a -> [ a ]
-toList = undefined
+toList (Last x) = [x]
+toList (Item x list) = x:(toList list)
 
 {- * DERIVING TYPECLASS INSTANCES -}
 
@@ -59,6 +66,12 @@ toList = undefined
   version of this LB so be careful ;).
 -}
 
+instance Eq a => Eq (List a) where
+   x == y = (toList x) == (toList y) 
+
+instance Show a => Show (List a)  where
+   show = show . toList
+
 {- * DEFINING TYPECLASS INSTANCES, FMAP -}
 
 {- ** LB 4.3 -}
@@ -69,3 +82,4 @@ toList = undefined
 
 instance Functor List where
   fmap = undefined
+
