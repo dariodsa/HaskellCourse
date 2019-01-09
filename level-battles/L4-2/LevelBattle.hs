@@ -45,11 +45,10 @@ data List a = Item a (List a)
             | Last a
 
 fromList :: [ a ] -> Maybe ( List a )
-fromList []     = Nothing
-fromList (x:xs) = Just $ fromList2 xs (Last x)
-    where fromList2 [] val     = val
-          fromList2 (x:[]) val = Item x val
-          fromList2 (x:xs) val = fromList2 xs $ Item (x) val 
+fromList [] = Nothing
+fromList xs = Just $ fromList2 xs
+    where fromList2 (x:[]) = Last x 
+          fromList2 (x:xs) = Item x $ fromList2 xs
           
 
 toList :: List a -> [ a ]
@@ -81,5 +80,8 @@ instance Show a => Show (List a)  where
 -}
 
 instance Functor List where
-  fmap = undefined
+  fmap fun (Last val) = Last newVal
+      where newVal = fun val
+  fmap fun (Item val x1) = Item newVal $ fmap fun x1
+      where newVal = fun val
 
