@@ -37,7 +37,9 @@ import System.Random
 -- Example: product' [4, 0, 3, -9, 1] => 12
 
 product' :: (Foldable t, Num a, Ord a) => t a -> a
-product' = undefined
+product' = foldl fun 1 
+  where fun acc val = if val <= 0 then acc
+                      else acc * val
 
 
 {- 11.2 Standard data types -}
@@ -53,7 +55,12 @@ product' = undefined
 -- Example: firstDup [5, 2, 3, 5] = 3
 
 firstDup :: Ord a => [a] -> Int
-firstDup = undefined
+firstDup xs = fun 0 xs S.empty
+  where  fun id   []   _   = -1
+         fun id (x:xs) set = case S.member x set of
+                              True  -> id
+                              False -> fun (id+1) xs $ S.insert x set
+
 
 
 -- ** TE 11.2.2
@@ -64,8 +71,14 @@ firstDup = undefined
 -- Example: isPermutation [3, 2, 1] [2, 1, 3] = True
 --          isPermutation [5, 2, 3] [5, 3, 3] = False
 
+getMap :: (Ord a) => [a] -> (M.Map a Int)
+getMap = foldl combine M.empty 
+   where combine map val = M.insertWith (+) val 1 map
+
 isPermutation :: Ord a => [a] -> [a] -> Bool
-isPermutation = undefined
+isPermutation x1 x2 = m1 == m2
+  where m1 = getMap x1
+        m2 = getMap x2
 
 {- 11.3 IO and random -}
 
@@ -82,8 +95,22 @@ isPermutation = undefined
 --   3
 -- Stdout: goodbye
 
+parseInt :: String -> Int
+parseInt = read
+
+getInput :: (S.Set Int) -> IO (String)
+getInput set = do
+     num <- fmap parseInt getLine
+     if S.member num set then 
+         return "goodbye"
+     else 
+         getInput $ S.insert num set
+
 firstDupIO :: IO ()
-firstDupIO = undefined
+firstDupIO = do 
+   res <- getInput S.empty
+   putStrLn res
+   
 
 -- ** TE 11.3.2
 
@@ -108,4 +135,8 @@ firstDupIO = undefined
 -- (all of these are completely random!)
 
 userRandomIO :: IO ()
-userRandomIO = undefined
+userRandomIO = do
+     num <- fmap parseInt getLine
+     g <- newStdGen
+     let xs = take num $ randoms g :: [Int]
+     mapM_ print xs
