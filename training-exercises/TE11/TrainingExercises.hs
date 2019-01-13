@@ -95,12 +95,9 @@ isPermutation x1 x2 = m1 == m2
 --   3
 -- Stdout: goodbye
 
-parseInt :: String -> Int
-parseInt = read
-
 getInput :: (S.Set Int) -> IO (String)
 getInput set = do
-     num <- fmap parseInt getLine
+     num <- readLn :: IO (Int)
      if S.member num set then 
          return "goodbye"
      else 
@@ -136,7 +133,7 @@ firstDupIO = do
 
 userRandomIO :: IO ()
 userRandomIO = do
-     num <- fmap parseInt getLine
+     num <- readLn :: IO Int
      g <- newStdGen
      let xs = take num $ randoms g :: [Int]
      mapM_ print xs
