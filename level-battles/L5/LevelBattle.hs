@@ -93,7 +93,10 @@ instance Read Person where
 -}
 
 getsPeople :: FilePath -> IO (Map Int Person)
-getsPeople path = undefined
+getsPeople path = do
+      peoples <- readFile "list.txt" 
+      return $ M.fromList $ map (\x -> let per = read x :: Person 
+                                        in (personId per, per)) $ lines peoples
 
 {- ** LB 5.4 -}
 
