@@ -109,10 +109,17 @@ getsPeople path = do
 -}
 
 randomListElement :: [a] -> IO a
-randomListElement xs = undefined
+randomListElement xs = do 
+    g <- R.getStdGen
+    return $ xs !! (R.randomRs (0, length xs) g !! 0) 
 
 selectRandomPerson :: Map Int Person -> IO (Maybe Person)
-selectRandomPerson p = undefined
+selectRandomPerson p = do
+        let keys = map fst $ M.toList p
+        if length keys == 0 then return Nothing
+        else do  
+          key <- randomListElement keys
+          return $ p M.!? key
 
 {- ** LB 5.5 -}
 
