@@ -70,9 +70,14 @@ instance Winnable SlightlyMoreLuckyPerson where
 -}
 
 parseSsv :: String -> [String]
-parseSsv s = undefined
+parseSsv = lines . map (\x -> if x == ';' then '\n' else x )
 
--- instance Read Person where
+instance Read Person where
+    readsPrec _  s = [(Person _personId _name _number, "")]
+            where xs = parseSsv s
+                  _personId = read $ xs !! 0 :: Int
+                  _name     = xs !! 1 
+                  _number   = read $ xs !! 2 :: Int
 
 
 {- ** LB 5.3 -}
