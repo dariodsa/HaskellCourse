@@ -39,11 +39,14 @@ import qualified System.Random as R
 data Person = Person { personId :: Int, name :: String, number :: Int} deriving (Show, Eq)
 data SlightlyMoreLuckyPerson = SlightlyMoreLuckyPerson { luckyName :: String } deriving Show
   
--- class Winnable a where
+class Winnable a where
+   isWinner :: a -> Bool
 
--- instance Winnable Person where
+instance Winnable Person where
+   isWinner (Person _ _ num) = num == 3
 
--- instance Winnable SlightlyMoreLuckyPerson where
+instance Winnable SlightlyMoreLuckyPerson where
+   isWinner (SlightlyMoreLuckyPerson name) = length name > 3
 
 
 {- ** LB 5.2 -}
