@@ -43,10 +43,10 @@ class Winnable a where
    isWinner :: a -> Bool
 
 instance Winnable Person where
-   isWinner (Person _ _ num) = num == 3
+   isWinner = (==3) . number 
 
 instance Winnable SlightlyMoreLuckyPerson where
-   isWinner (SlightlyMoreLuckyPerson name) = length name > 3
+   isWinner = (>3) . length . luckyName
 
 
 {- ** LB 5.2 -}
@@ -94,7 +94,7 @@ instance Read Person where
 
 getsPeople :: FilePath -> IO (Map Int Person)
 getsPeople path = do
-      peoples <- readFile "list.txt" 
+      peoples <- readFile path
       return $ M.fromList $ map (\x -> let per = read x :: Person 
                                         in (personId per, per)) $ lines peoples
 
@@ -110,8 +110,8 @@ getsPeople path = do
 
 randomListElement :: [a] -> IO a
 randomListElement xs = do 
-    g <- R.getStdGen
-    return $ xs !! (R.randomRs (0, length xs) g !! 0) 
+    g <- R.newStdGen
+    return $ xs !! (R.randomRs (0, length xs -1) g !! 0) 
 
 selectRandomPerson :: Map Int Person -> IO (Maybe Person)
 selectRandomPerson p = do
@@ -144,13 +144,28 @@ selectRandomPerson p = do
 data Battle = Battle {solvedTasks :: Int, mergeRequestName :: String} deriving (Show, Eq)
 
 notNegative :: Int -> Maybe Int
-notNegative n = undefined
+notNegative n = case n >= 0 of 
+                  True  -> Just n
+                  False -> Nothing
 
 notEmpty :: String -> Maybe String
-notEmpty s = undefined
+notEmpty s = case length s /= 0 of
+                  True  -> Just s
+                  False -> Nothing
 
 validateBattle :: Battle -> Maybe Battle
-validateBattle b = undefined
+validateBattle battle@(Battle task name) 
+    | task >=3 && name == "level-5" = Just $ battle
+    |            otherwise          = Nothing                                                       
+
+getBattle Nothing  _ = Nothing
+getBattle  _  Nothing = Nothing
+getBattle  (Just num) (Just name) = validateBattle $ Battle num name
+  
+
 
 createBattle :: Int -> String -> Maybe Battle
-createBattle st' mrn' = undefined
+createBattle num name = do 
+                     notNegative num >> notEmpty name >> validateBattle ( Battle num name)
+                     
+                         
