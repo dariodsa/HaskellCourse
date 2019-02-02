@@ -158,12 +158,6 @@ validateBattle battle@(Battle task name)
     | task >=3 && name == "level-5" = Just $ battle
     |            otherwise          = Nothing                                                       
 
-getBattle Nothing  _ = Nothing
-getBattle  _  Nothing = Nothing
-getBattle  (Just num) (Just name) = validateBattle $ Battle num name
-  
-
-
 createBattle :: Int -> String -> Maybe Battle
 createBattle num name = do 
                      notNegative num >> notEmpty name >> validateBattle ( Battle num name)
