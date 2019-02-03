@@ -39,11 +39,14 @@ import qualified System.Random as R
 data Person = Person { personId :: Int, name :: String, number :: Int} deriving (Show, Eq)
 data SlightlyMoreLuckyPerson = SlightlyMoreLuckyPerson { luckyName :: String } deriving Show
   
--- class Winnable a where
+class Winnable a where
+   isWinner :: a -> Bool
 
--- instance Winnable Person where
+instance Winnable Person where
+   isWinner = (==3) . number 
 
--- instance Winnable SlightlyMoreLuckyPerson where
+instance Winnable SlightlyMoreLuckyPerson where
+   isWinner = (>3) . length . luckyName
 
 
 {- ** LB 5.2 -}
@@ -67,9 +70,14 @@ data SlightlyMoreLuckyPerson = SlightlyMoreLuckyPerson { luckyName :: String } d
 -}
 
 parseSsv :: String -> [String]
-parseSsv s = undefined
+parseSsv = lines . map (\x -> if x == ';' then '\n' else x )
 
--- instance Read Person where
+instance Read Person where
+    readsPrec _  s = [(Person _personId _name _number, "")]
+            where xs = parseSsv s
+                  _personId = read $ xs !! 0 :: Int
+                  _name     = xs !! 1 
+                  _number   = read $ xs !! 2 :: Int
 
 
 {- ** LB 5.3 -}
@@ -85,7 +93,10 @@ parseSsv s = undefined
 -}
 
 getsPeople :: FilePath -> IO (Map Int Person)
-getsPeople path = undefined
+getsPeople path = do
+      peoples <- readFile path
+      return $ M.fromList $ map (\x -> let per = read x :: Person 
+                                        in (personId per, per)) $ lines peoples
 
 {- ** LB 5.4 -}
 
@@ -98,10 +109,17 @@ getsPeople path = undefined
 -}
 
 randomListElement :: [a] -> IO a
-randomListElement xs = undefined
+randomListElement xs = do 
+    g <- R.newStdGen
+    return $ xs !! (R.randomRs (0, length xs -1) g !! 0) 
 
 selectRandomPerson :: Map Int Person -> IO (Maybe Person)
-selectRandomPerson p = undefined
+selectRandomPerson p = do
+        let keys = map fst $ M.toList p
+        if length keys == 0 then return Nothing
+        else do  
+          key <- randomListElement keys
+          return $ p M.!? key
 
 {- ** LB 5.5 -}
 
@@ -126,13 +144,22 @@ selectRandomPerson p = undefined
 data Battle = Battle {solvedTasks :: Int, mergeRequestName :: String} deriving (Show, Eq)
 
 notNegative :: Int -> Maybe Int
-notNegative n = undefined
+notNegative n = case n >= 0 of 
+                  True  -> Just n
+                  False -> Nothing
 
 notEmpty :: String -> Maybe String
-notEmpty s = undefined
+notEmpty s = case length s /= 0 of
+                  True  -> Just s
+                  False -> Nothing
 
 validateBattle :: Battle -> Maybe Battle
-validateBattle b = undefined
+validateBattle battle@(Battle task name) 
+    | task >=3 && name == "level-5" = Just $ battle
+    |            otherwise          = Nothing                                                       
 
 createBattle :: Int -> String -> Maybe Battle
-createBattle st' mrn' = undefined
+createBattle num name = do 
+                     notNegative num >> notEmpty name >> validateBattle ( Battle num name)
+                     
+                         
